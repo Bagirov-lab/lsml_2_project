@@ -1,12 +1,10 @@
-from model import build_transformer
-from dataset import TranslationDataset, causal_mask
-from config import get_config, get_weights_file_path, latest_weights_file_path
+from utils.model import build_transformer
+from utils.dataset import TranslationDataset, causal_mask
+from utils.config import get_config, get_weights_file_path, latest_weights_file_path
 
-import torchtext.datasets as datasets
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader, random_split
-from torch.optim.lr_scheduler import LambdaLR
+from torch.utils.data import DataLoader, random_split
 
 import warnings
 from tqdm import tqdm

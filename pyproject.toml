@@ -12,6 +12,10 @@ pandas = "^2.2.3"
 nltk = "^3.9.1"
 transformers = "^4.47.0"
 scikit-learn = "^1.5.2"
+torch = "^2.5.1"
+torchtext = "^0.18.0"
+torchmetrics = "^1.6.0"
+datasets = "^3.1.0"
 
 
 [build-system]
