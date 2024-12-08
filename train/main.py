@@ -1,6 +1,6 @@
-from utils.model import build_transformer
-from utils.dataset import TranslationDataset, causal_mask
-from utils.config import get_config, get_weights_file_path, latest_weights_file_path
+from lsml_core.model import build_transformer
+from lsml_core.dataset import TranslationDataset, causal_mask
+from lsml_core.config import get_config, get_weights_file_path, latest_weights_file_path
 
 import torch
 import torch.nn as nn

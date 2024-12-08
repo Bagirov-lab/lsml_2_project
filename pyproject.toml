@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "super-model"
+name = "lsml_core"
 version = "1.0.0"
 description = ""
-authors = ["Evgeny Bagirov <evgeny.bagirov@myobligo.com>"]
+authors = ["Evgeny Bagirov <e.bagirovv@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
