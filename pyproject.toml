@@ -16,7 +16,11 @@ torch = "^2.5.1"
 torchtext = "^0.18.0"
 torchmetrics = "^1.6.0"
 datasets = "^3.1.0"
+comet-ml = "^3.47.4"
 
+[tool.poetry.plugins.dotenv]
+ignore = "true"
+location = ".env.dev"
 
 [build-system]
 requires = ["poetry-core"]
