@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lsml_core"
+name = "app"
 version = "1.0.0"
 description = ""
 authors = ["Evgeny Bagirov <e.bagirovv@gmail.com>"]
