@@ -5,7 +5,7 @@ services:
   core_service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.back
       args:
         COMET_API_KEY: ${COMET_API_KEY}
         COMET_WORKSPACE: ${COMET_WORKSPACE}
@@ -14,3 +14,24 @@ services:
     ports:
       - "80:80"
     restart: unless-stopped
+    networks:
+      - lovely-pets-net
+
+  front_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.front
+    ports:
+      - "8080:80"  # Maps container port 80 to host port 8080
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://core_service:80
+    networks:
+      - lovely-pets-net
+    depends_on:
+      - core_service
+
+# Shared Network
+networks:
+  lovely-pets-net:
+    driver: bridge
