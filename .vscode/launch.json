@@ -8,11 +8,13 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
-            "justMyCode": false,  // Enable debugging external libraries
-            "args": ["-i"],        // Start in interactive mode
+            "justMyCode": false, // Enable debugging external libraries
+            "args": [
+                "-i"
+            ], // Start in interactive mode
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/.venv/bin/python3"
-                    }
+            }
         }
     ]
 }
