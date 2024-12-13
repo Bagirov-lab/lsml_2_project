@@ -1,0 +1,16 @@
+name: lovely_pets
+version: "3.9"
+
+services:
+  core_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        COMET_API_KEY: ${COMET_API_KEY}
+        COMET_WORKSPACE: ${COMET_WORKSPACE}
+        COMET_MODEL_NAME: ${COMET_MODEL_NAME}
+        COMET_MODEL_NAME_VERSION: ${COMET_MODEL_NAME_VERSION}
+    ports:
+      - "80:80"
+    restart: unless-stopped

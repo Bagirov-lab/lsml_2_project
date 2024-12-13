@@ -1,3 +1,33 @@
-I have chosen the translation task (English to Italian) to train my Transformer model on the [opus_books](https://huggingface.co/datasets/Helsinki-NLP/opus_books) dataset from Hugging Face. 
 
-The training of this model was done on Kaggle using an **NVIDIA Tesla P100 - 16GB GPU**. It took **5 hours and 11 minutes** for training over **20 epochs** and each epoch has **3638 batches** to train on.
+Command to run server
+```
+p run uvicorn app.main:app
+```
+
+Command to load data
+
+```
+p run python app/model.py
+
+```
+
+Run Container
+
+```
+docker run --env-file .env -d -p 80:80 fastapi-pet-classifier
+```
+
+Bild
+```
+docker-compose -f docker-compose.yml --env-file .env build --no-cache
+```
+
+Run
+```
+docker-compose -f docker-compose.yml --env-file .env up -d
+```
+
+Down
+```
+docker-compose -f docker-compose.yml down --volumes
+```
