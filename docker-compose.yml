@@ -12,7 +12,7 @@ services:
         COMET_MODEL_NAME: ${COMET_MODEL_NAME}
         COMET_MODEL_NAME_VERSION: ${COMET_MODEL_NAME_VERSION}
     ports:
-      - "80:80"
+      - "80:80"  # Maps container port 80 to host port 80
     restart: unless-stopped
     networks:
       - lovely-pets-net
