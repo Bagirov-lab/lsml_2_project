@@ -1,5 +1,8 @@
-// const backendUrl = window.env.BACKEND_URL;
-const backendUrl = "http://core_service:80"; // Hardcoded for testing purposes
+const backendUrl = window.env.BACKEND_URL;
+
+//|| "http://localhost:80"; // Fallback to localhost if not set
+
+console.log("Using backend URL:", backendUrl);
 
 document.getElementById('upload-form').addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -25,10 +28,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
             body: formData,
         });
 
-        console.log("Response status:", response.status);
-
-        ;
-
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Error response:", errorText);
@@ -36,7 +35,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
         }
 
         const data = await response.json();
-        console.log("Response data:", data);
         resultDiv.textContent = `Predicted Breed: ${data.breed_name}`;
     } catch (error) {
         console.error("Error in fetch:", error);

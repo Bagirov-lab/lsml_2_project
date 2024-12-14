@@ -7,6 +7,9 @@ WORKDIR /usr/share/nginx/html
 # Copy the front-end files into the container
 COPY web-app/ .
 
+# ARG
+ARG BACKEND_URL
+
 # Inject the BACKEND_URL environment variable into a config.js file
 RUN echo "window.env = { BACKEND_URL: '${BACKEND_URL}' };" > /usr/share/nginx/html/config.js
 

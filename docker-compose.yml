@@ -21,11 +21,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.front
+      args:
+        BACKEND_URL: http://localhost:80
     ports:
       - "8080:80"  # Maps container port 80 to host port 8080
     restart: unless-stopped
-    environment:
-      BACKEND_URL: http://core_service:80
     networks:
       - lovely-pets-net
     depends_on:

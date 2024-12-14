@@ -1,56 +1,68 @@
-
 # Local
+
 Command to load data
 
-```
+## Command to load artefacts
+
+```bash
 p run python app/model.py
 ```
 
-Command to run server
-```
+## Command to run server
+
+```bash
 p run uvicorn app.main:app
 ```
 
+## Command to run web-app
+
 Run Web-App
-```
+
+```bash
 p run python -m http.server 8080
 ````
 
 # Container Core
 
 ## Core
+
 Run Container
 
-```
+```bash
 docker run --env-file .env -d -p 80:80 fastapi-pet-classifier
 ```
 
 ## Front
 
 ### Build
-```
+
+```bash
 docker build -f Dockerfile.front -t front-end-app .
 ```
 
 ### Run
 
-```
+```bash
 docker run -p 8080:80 front-end-app
 ```
-Look over http://127.0.0.1:8080
 
-# Compose 
-Bild
-```
+# Compose
+
+
+## Build
+
+```bash
 docker-compose -f docker-compose.yml --env-file .env build --no-cache
 ```
 
-Run
-```
+## Run
+
+```bash
 docker-compose -f docker-compose.yml --env-file .env up -d
 ```
 
-Down
-```
+## Down
+
+```bash
 docker-compose -f docker-compose.yml down --volumes
 ```
