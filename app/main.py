@@ -20,11 +20,15 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins. Replace "*" with specific origins if needed.
+    allow_origins=[
+        "*"
+    ],  # Allow all origins. Replace "*" with specific origins if needed.
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.).
     allow_headers=["*"],  # Allow all headers.
 )
+
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     """
@@ -35,28 +39,27 @@ async def predict(file: UploadFile = File(...)):
         # Read and preprocess the image
         image = Image.open(file.file).convert("RGB")
         # Define transformation for incoming images
-        transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.ToTensor()
-        ])
+        transform = transforms.Compose(
+            [transforms.Resize((224, 224)), transforms.ToTensor()]
+        )
         image_tensor = transform(image).unsqueeze(0)  # Add batch dimension
 
         # Make prediction
         with torch.no_grad():
             outputs = model(image_tensor)
             _, predicted = torch.max(outputs, 1)
-        
+
         # Map prediction to breed name
         class_index = predicted.item()
         breed_name = class_to_breed.get(class_index, "Unknown Breed")
-        
+
         logging.info("Predict: Success")
-        
+
         # Return the predicted class and breed name
         return {
             "filename": file.filename,
             "prediction": class_index,
-            "breed_name": breed_name
+            "breed_name": breed_name,
         }
     except Exception as e:
         logging.info(f"Predict: Error {e.__traceback__})")
