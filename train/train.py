@@ -250,12 +250,23 @@ for epoch in range(CONFIG.num_epochs):
         correct += (predicted == labels).sum().item()
         
     # Training Metrics
-    train_labels_all = torch.cat([labels for _, labels in train_loader.dataset])
-    train_preds_all = torch.cat([
-        torch.argmax(model(images.to(device)).detach(), dim=1)
-        for images, _ in train_loader.dataset
-    ])
+    train_labels_all = []
+    train_preds_all = []
 
+    with torch.no_grad():
+        for images, labels in train_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+
+            train_labels_all.append(labels)
+            train_preds_all.append(predicted)
+
+    # Concatenate all batches into single tensors
+    train_labels_all = torch.cat(train_labels_all)
+    train_preds_all = torch.cat(train_preds_all)
+
+    # Calculate metrics
     train_precision, train_recall, train_f1 = calculate_metrics(train_labels_all, train_preds_all)
 
     scheduler.step()
@@ -279,15 +290,27 @@ for epoch in range(CONFIG.num_epochs):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             
-        # Validation Metrics
-        val_labels_all = torch.cat([labels for _, labels in val_loader.dataset])
-        val_preds_all = torch.cat([
-            torch.argmax(model(images.to(device)).detach(), dim=1)
-            for images, _ in val_loader.dataset
-        ])
+    val_labels_all = []
+    val_preds_all = []
 
-        val_precision, val_recall, val_f1 = calculate_metrics(val_labels_all, val_preds_all)
+    with torch.no_grad():
+        for images, labels in val_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            val_running_loss += loss.item()
+            _, predicted = torch.max(outputs.data, 1)
 
+            val_labels_all.append(labels)
+            val_preds_all.append(predicted)
+
+    # Concatenate all batches into single tensors
+    val_labels_all = torch.cat(val_labels_all)
+    val_preds_all = torch.cat(val_preds_all)
+
+    # Calculate metrics
+    val_precision, val_recall, val_f1 = calculate_metrics(val_labels_all, val_preds_all)
+    
     val_loss_epoch = val_running_loss / len(val_loader)
     val_accuracy = 100 * correct / total
     val_losses.append(val_loss_epoch)
