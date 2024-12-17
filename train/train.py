@@ -41,8 +41,8 @@ transform_train = transforms.Compose([
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Random color adjustment
     transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),  # Slight translation
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),  # Crop randomly within the size range
-    transforms.ToTensor(),                # Convert to tensor
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalize
+    transforms.ToTensor()                # Convert to tensor
 ])
 
 transform_test = transforms.Compose(
