@@ -26,7 +26,7 @@ from kaggle_secrets import UserSecretsClient
 class CONFIG:
     batch_size = 128
     val_ratio = 0.1
-    base_layer_name = "resnet34"
+    base_layer_name = "resnet18"
     weights = "DEFAULT"
     final_layer_n_classes = 37
     num_epochs = 35

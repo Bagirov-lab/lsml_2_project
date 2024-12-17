@@ -6,11 +6,11 @@ import torch
 from torchvision.models import get_model
 import logging
 
+from .train import create_model_with_lora, LORALayer
 
 load_dotenv(dotenv_path=".env")
 
-def download_model():
-    # Download Model State
+def download_model_from_comet():
     try:
         comet_ml.login()
 
@@ -33,19 +33,6 @@ def download_model():
     return None
 
 def load_model():
-
-    # Declaire LoRA
-    class LORALayer(nn.Module):
-        def __init__(self, adapted_layer, rank=16):
-            super(LORALayer, self).__init__()
-            self.adapted_layer = adapted_layer
-            self.A = nn.Parameter(torch.randn(adapted_layer.weight.size(1), rank))
-            self.B = nn.Parameter(torch.randn(rank, adapted_layer.weight.size(0)))
-
-        def forward(self, x):
-            low_rank_matrix = self.A @ self.B
-            adapted_weight = self.adapted_layer.weight + low_rank_matrix.t()  # Ensure correct shape
-            return nn.functional.linear(x, adapted_weight, self.adapted_layer.bias)
     
     # Initiate LoRA
     # Apply LORA to the last layer of the model
@@ -65,7 +52,7 @@ def load_model():
 
 if __name__ == "__main__":
     print("Starting the model download...")
-    download_model()
+    download_model_from_comet()
 
     # print("Loading the model...")
     # model = load_model()
