@@ -10,9 +10,9 @@ from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader, random_split
 
 import torchvision.transforms as transforms
+from torchvision.transforms import ToPILImage
 from torchvision.datasets import OxfordIIITPet
 from torchvision.models import get_model
-from torchvision.transforms import ToPILImage
 
 from tqdm import tqdm
 
@@ -34,20 +34,31 @@ class CONFIG:
     def model_log_name(self):
         return f"LoRA_Pet_{CONFIG.base_layer_name}"
 
+transform_train = transforms.Compose([
+    transforms.Resize((224, 224)),          # Resize to fit model input
+    transforms.RandomHorizontalFlip(p=0.5), # Randomly flip horizontally
+    transforms.RandomRotation(degrees=15),  # Random rotation
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Random color adjustment
+    transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),  # Slight translation
+    transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),  # Crop randomly within the size range
+    transforms.ToTensor(),                # Convert to tensor
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
+])
 
-transform = transforms.Compose(
+transform_test = transforms.Compose(
     [
         transforms.Resize((224, 224)),  # Resize images to fit the model input size
         transforms.ToTensor(),
     ]
 )
 
+
 # Load the dataset
 train_dataset = OxfordIIITPet(
-    root="data/", split="trainval", download=True, transform=transform
+    root="data/", split="trainval", download=True, transform=transform_train
 )
 test_dataset = OxfordIIITPet(
-    root="data/", split="test", download=True, transform=transform
+    root="data/", split="test", download=True, transform=transform_test
 )
 
 # Assuming 'train_dataset' and 'test_dataset' are already loaded
