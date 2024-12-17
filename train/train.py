@@ -1,8 +1,8 @@
-# Config
+import comet_ml
+from comet_ml.integration.pytorch import log_model
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 import torch
 import torch.nn as nn
@@ -20,9 +20,6 @@ from tqdm import tqdm
 
 from kaggle_secrets import UserSecretsClient
 
-import comet_ml
-from comet_ml.integration.pytorch import log_model
-
 class CONFIG:
     batch_size = 128  # PARAM
     val_ratio = 0.1  # PARAM
@@ -36,6 +33,16 @@ class CONFIG:
 
     def model_log_name(self):
         return f"LoRA_Pet_{CONFIG.base_layer_name}"
+    
+    
+user_secrets = UserSecretsClient()
+
+
+experiment = comet_ml.start(
+    api_key=user_secrets.get_secret("comet_api_key"),
+    project_name="pet-recognition",
+    workspace=user_secrets.get_secret("comet_workspace"),
+)
 
 transform_train = transforms.Compose([
     transforms.Resize((224, 224)),          # Resize to fit model input
@@ -45,7 +52,7 @@ transform_train = transforms.Compose([
     transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),  # Slight translation
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),  # Crop randomly within the size range
     transforms.ToTensor(),                # Convert to tensor
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
+    # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
 ])
 
 transform_test = transforms.Compose(
@@ -63,6 +70,9 @@ train_dataset = OxfordIIITPet(
 test_dataset = OxfordIIITPet(
     root="data/", split="test", download=True, transform=transform_test
 )
+
+experiment.log_parameter("train_class_names", train_dataset.classes)
+experiment.log_parameter("train_class_names", test_dataset.classes)
 
 # Assuming 'train_dataset' and 'test_dataset' are already loaded
 
@@ -133,18 +143,6 @@ val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 # # Model
-
-# ## COMET
-
-
-user_secrets = UserSecretsClient()
-
-
-experiment = comet_ml.start(
-    api_key=user_secrets.get_secret("comet_api_key"),
-    project_name="pet-recognition",
-    workspace=user_secrets.get_secret("comet_workspace"),
-)
 
 # ## Load Model
 
