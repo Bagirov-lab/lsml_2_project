@@ -10,6 +10,47 @@ from .train import create_model_with_lora, LORALayer
 
 load_dotenv(dotenv_path=".env")
 
+class_to_breed = {
+    0: "Abyssinian",
+    1: "American Bulldog",
+    2: "American Pit Bull Terrier",
+    3: "Basset Hound",
+    4: "Beagle",
+    5: "Bengal",
+    6: "Birman",
+    7: "Bombay",
+    8: "Boxer",
+    9: "British Shorthair",
+    10: "Chihuahua",
+    11: "Egyptian Mau",
+    12: "English Cocker Spaniel",
+    13: "English Setter",
+    14: "German Shorthaired",
+    15: "Great Pyrenees",
+    16: "Havanese",
+    17: "Japanese Chin",
+    18: "Keeshond",
+    19: "Leonberger",
+    20: "Maine Coon",
+    21: "Miniature Pinscher",
+    22: "Newfoundland",
+    23: "Persian",
+    24: "Pomeranian",
+    25: "Pug",
+    26: "Ragdoll",
+    27: "Russian Blue",
+    28: "Saint Bernard",
+    29: "Samoyed",
+    30: "Scottish Terrier",
+    31: "Shiba Inu",
+    32: "Siamese",
+    33: "Sphynx",
+    34: "Staffordshire Bull Terrier",
+    35: "Wheaten Terrier",
+    36: "Yorkshire Terrier"
+}
+
+
 def download_model_from_comet():
     try:
         comet_ml.login()
@@ -32,21 +73,40 @@ def download_model_from_comet():
 
     return None
 
+def create_env_file(env_dict: dict, file_path:str):
+    """
+    Create a .env file from a given dictionary.
+
+    Args:
+        env_dict (dict): Dictionary containing environment variables as key-value pairs.
+        file_path (str): Path to the .env file (default is ".env").
+    """
+    try:
+        with open(file_path, "w") as env_file:
+            for key, value in env_dict.items():
+                env_file.write(f"{key}={value}\n")
+        print(f".env file successfully created at: {file_path}")
+    except Exception as e:
+        print(f"Error creating .env file: {e}")
+
 def load_model():
     
-    # Initiate LoRA
-    # Apply LORA to the last layer of the model
-    
-    final_layer_n_classes = 37
-    model = get_model(name='resnet18', weights="DEFAULT")
+    final_layer_n_classes = int(environ.get("FINAL_LAYER_N_CLASSES"))
+    weights = environ.get("WEIGHTS")
+    base_layer_name = environ.get("BASE_LAYER_NAME")
+    comet_model_file = environ.get("COMET_MODEL_FILE")
+
+    model = get_model(name=base_layer_name, weights=weights)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, final_layer_n_classes)
     model.fc = LORALayer(model.fc)
     
     # Load the state dictionary into the model
-    MODEL_FILE = 'model-data/comet-torch-model.pth'
-    state_dict = torch.load(MODEL_FILE, map_location=torch.device('cpu'),
-                            weights_only=True)
+    state_dict = torch.load(
+        f=comet_model_file, 
+        map_location=torch.device('cpu'),
+        weights_only=True
+    )
     model.load_state_dict(state_dict)
     
     return model
@@ -109,9 +169,20 @@ if __name__ == "__main__":
     )
     
     logging.info("Load state dictionary...")
+    comet_model_file = environ.get("COMET_MODEL_FILE")
     state_dict = torch.load(
-        environ.get("COMET_MODEL_FILE"), 
+        f=comet_model_file, 
         map_location=torch.device('cpu'),
         weights_only=True
     )
     model.load_state_dict(state_dict)
+
+    logging.info("Save model params...")
+    create_env_file(
+        env_dict={
+            "FINAL_LAYER_N_CLASSES":final_layer_n_classes,
+            "WEIGHTS":weights,
+            "BASE_LAYER_NAME":base_layer_name,
+            "COMET_MODEL_FILE": comet_model_file
+        },             
+        file_path=".env.model")
