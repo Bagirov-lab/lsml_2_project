@@ -36,6 +36,7 @@ def load_model():
     
     # Initiate LoRA
     # Apply LORA to the last layer of the model
+    
     final_layer_n_classes = 37
     model = get_model(name='resnet18', weights="DEFAULT")
     num_ftrs = model.fc.in_features
@@ -51,13 +52,66 @@ def load_model():
     return model
 
 if __name__ == "__main__":
-    print("Starting the model download...")
+    logging.info("Logging to the Comet ML service...")
+    comet_ml.login()
+    
+    logging.info("Download model from registry...")
     download_model_from_comet()
+    
+    logging.info("Load Experiment Params...")
+    comet_api = comet_ml.API() 
+    
+    model_comet = comet_api.get_model(workspace=environ.get("COMET_WORKSPACE"), model_name=environ.get("COMET_MODEL_NAME"))
+    
+    model_comet_details = model_comet.get_details(version=environ.get("COMET_MODEL_NAME_VERSION"))
 
-    # print("Loading the model...")
-    # model = load_model()
+    model_comet_details_experiment_key = model_comet_details.get("experimentKey")
+    
+    comet_experiment = comet_api.get_experiment_by_key(model_comet_details_experiment_key)
 
-    # if model:
-    #     print("Model successfully loaded!")
-    # else:
-    #     print("Failed to load the model.")
+    # final_layer_n_classes
+    base_layer_name = comet_experiment.get_parameters_summary("base_layer_name").get("valueCurrent")
+    if len(base_layer_name) > 0:
+        base_layer_name  = base_layer_name.get("valueCurrent")
+    else:
+        raise ValueError(
+            "Experiment does not have base_layer_name parameter. "
+            f"\ncheck id {model_comet_details_experiment_key}"
+        )
+    
+    final_layer_n_classes = comet_experiment.get_parameters_summary("final_layer_n_classes")
+    if len(final_layer_n_classes) > 0:
+        try:
+            final_layer_n_classes  = final_layer_n_classes.get("valueCurrent")
+        except ValueError:
+            raise ValueError(
+            "Experiment has final_layer_n_classes parameter which is not int"
+            f"\ncheck id {model_comet_details_experiment_key}"
+        )  
+    else:
+        raise ValueError(
+            "Experiment does not have final_layer_n_classes parameter. "
+            f"\ncheck id {model_comet_details_experiment_key}"
+        )  
+    
+    weights = comet_experiment.get_parameters_summary("weights")
+    if len(weights) > 0:
+        weights  = weights.get("valueCurrent")
+    else:
+        logging.warning("No weights param, using default value 'DEFAULT'...")
+        weights = 'DEFAULT'
+    
+    logging.info("Initialise of the Full Model...")
+    model = create_model_with_lora(
+        base_layer_name=base_layer_name,
+        final_layer_n_classes=final_layer_n_classes,
+        weights=weights
+    )
+    
+    logging.info("Load state dictionary...")
+    state_dict = torch.load(
+        environ.get("COMET_MODEL_FILE"), 
+        map_location=torch.device('cpu'),
+        weights_only=True
+    )
+    model.load_state_dict(state_dict)
