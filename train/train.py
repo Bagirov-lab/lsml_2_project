@@ -37,6 +37,7 @@ class CONFIG:
     def model_log_name(self):
         return f"LoRA_Pet_{CONFIG.base_layer_name}"
 
+
 def calculate_metrics(y_true, y_pred):
     y_true = y_true.cpu().numpy()
     y_pred = y_pred.cpu().numpy()
@@ -46,6 +47,7 @@ def calculate_metrics(y_true, y_pred):
     f1 = f1_score(y_true, y_pred, average="weighted", zero_division=0)
 
     return precision, recall, f1
+
 
 def show_sample_images(dataset, num_labels=5):
     fig, axs = plt.subplots(1, num_labels, figsize=(15, 3))
@@ -67,6 +69,7 @@ def show_sample_images(dataset, num_labels=5):
 
     plt.show()
 
+
 class LORALayer(nn.Module):
     def __init__(self, adapted_layer, rank=16):
         super(LORALayer, self).__init__()
@@ -78,30 +81,31 @@ class LORALayer(nn.Module):
         low_rank_matrix = self.A @ self.B
         adapted_weight = self.adapted_layer.weight + low_rank_matrix.t()
         return nn.functional.linear(x, adapted_weight, self.adapted_layer.bias)
-    
+
+
 def create_model_with_lora(
-    base_layer_name: str, 
+    base_layer_name: str,
     final_layer_n_classes: int,
     weights: str,
-    exp: CometExperiment | None = None
-    ):
+    exp: CometExperiment | None = None,
+):
     # Load Base Learner
     model = get_model(name=base_layer_name, weights=weights)
 
     num_ftrs = model.fc.in_features
-    
+
     model.fc = nn.Linear(num_ftrs, final_layer_n_classes)
     model.fc = LORALayer(model.fc)
-    
+
     if exp is not None:
         exp.log_parameter("base_layer_name", base_layer_name)
         exp.log_parameter("num_ftrs", num_ftrs)
         exp.log_parameter("final_layer_n_classes", final_layer_n_classes)
-    
+
     return model
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     user_secrets = UserSecretsClient()
 
     experiment = comet_ml.start(
@@ -118,7 +122,9 @@ if __name__ == '__main__':
             transforms.ColorJitter(
                 brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1
             ),  # Random color adjustment
-            transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),  # Slight translation
+            transforms.RandomAffine(
+                degrees=15, translate=(0.1, 0.1)
+            ),  # Slight translation
             transforms.RandomResizedCrop(
                 224, scale=(0.8, 1.0)
             ),  # Crop randomly within the size range
@@ -133,7 +139,6 @@ if __name__ == '__main__':
             transforms.ToTensor(),
         ]
     )
-
 
     # Load the dataset
     train_dataset = OxfordIIITPet(
@@ -156,14 +161,11 @@ if __name__ == '__main__':
     total_labels = len(np.unique([label for _, label in train_dataset]))
     print(f"Total Labels: {total_labels}")
 
-
     # Show sample images from the training dataset
     show_sample_images(train_dataset)
 
-
     batch_size = CONFIG.batch_size  # PARAM
     val_ratio = CONFIG.val_ratio  # PARAM
-
 
     # Define the size of the validation set
     val_size = int(val_ratio * len(train_dataset))
@@ -182,12 +184,11 @@ if __name__ == '__main__':
         base_layer_name=CONFIG.base_layer_name,
         final_layer_n_classes=CONFIG.final_layer_n_classes,
         weights=CONFIG.weights,
-        exp=experiment
+        exp=experiment,
     )
 
     # Train
     experiment.log_parameter("num_epochs", CONFIG.num_epochs)
-
 
     # Check if CUDA (GPU support) is available and use it; otherwise, fall back to CPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -211,7 +212,6 @@ if __name__ == '__main__':
 
     criterion = nn.CrossEntropyLoss()
     experiment.log_parameter("criterion", "CrossEntropyLoss")
-
 
     # Implement a learning rate scheduler
     scheduler = lr_scheduler.StepLR(
@@ -308,7 +308,9 @@ if __name__ == '__main__':
         val_preds_all = torch.cat(val_preds_all)
 
         # Calculate metrics
-        val_precision, val_recall, val_f1 = calculate_metrics(val_labels_all, val_preds_all)
+        val_precision, val_recall, val_f1 = calculate_metrics(
+            val_labels_all, val_preds_all
+        )
 
         val_loss_epoch = val_running_loss / len(val_loader)
         val_accuracy = 100 * correct / total
@@ -412,7 +414,6 @@ if __name__ == '__main__':
             predicted_all = predicted
         else:
             predicted_all = torch.cat((predicted_all, predicted))
-
 
     total = labels_all.size(0)
     correct = (predicted_all == labels_all).sum().item()
