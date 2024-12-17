@@ -1,7 +1,5 @@
 const backendUrl = window.env.BACKEND_URL;
 
-//|| "http://localhost:80"; // Fallback to localhost if not set
-
 console.log("Using backend URL:", backendUrl);
 
 document.getElementById('upload-form').addEventListener('submit', async function (event) {
