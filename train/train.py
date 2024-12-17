@@ -14,6 +14,8 @@ from torchvision.transforms import ToPILImage
 from torchvision.datasets import OxfordIIITPet
 from torchvision.models import get_model
 
+from sklearn.metrics import precision_score, recall_score, f1_score
+
 from tqdm import tqdm
 
 from kaggle_secrets import UserSecretsClient
@@ -30,6 +32,7 @@ class CONFIG:
     optimizer_lr = 0.001
     scheduler_step_size = 7
     scheduler_gamma = 0.1
+    patience = 5 # Number of epochs to wait before stopping if no improvement
 
     def model_log_name(self):
         return f"LoRA_Pet_{CONFIG.base_layer_name}"
@@ -41,8 +44,8 @@ transform_train = transforms.Compose([
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),  # Random color adjustment
     transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),  # Slight translation
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),  # Crop randomly within the size range
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalize
-    transforms.ToTensor()                # Convert to tensor
+    transforms.ToTensor(),                # Convert to tensor
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
 ])
 
 transform_test = transforms.Compose(
@@ -168,9 +171,7 @@ class LORALayer(nn.Module):
 
     def forward(self, x):
         low_rank_matrix = self.A @ self.B
-        adapted_weight = (
-            self.adapted_layer.weight + low_rank_matrix.t()
-        )  # Ensure correct shape
+        adapted_weight = self.adapted_layer.weight + low_rank_matrix.t()
         return nn.functional.linear(x, adapted_weight, self.adapted_layer.bias)
 
 
@@ -216,6 +217,20 @@ experiment.log_parameter("scheduler_gamma", CONFIG.scheduler_gamma)
 
 best_val_accuracy = 0.0
 best_model_wts = model.state_dict()
+patience = CONFIG.patience
+experiment.log_parameter("patience", patience)
+best_val_loss = float("inf")
+patience_counter = 0
+
+def calculate_metrics(y_true, y_pred):
+    y_true = y_true.cpu().numpy()
+    y_pred = y_pred.cpu().numpy()
+
+    precision = precision_score(y_true, y_pred, average='weighted')
+    recall = recall_score(y_true, y_pred, average='weighted')
+    f1 = f1_score(y_true, y_pred, average='weighted')
+
+    return precision, recall, f1
 
 for epoch in range(CONFIG.num_epochs):
     model.train()
@@ -235,17 +250,27 @@ for epoch in range(CONFIG.num_epochs):
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+        
+    # Training Metrics
+    train_labels_all = torch.cat([labels for _, labels in train_loader.dataset])
+    train_preds_all = torch.cat([
+        torch.argmax(model(images.to(device)).detach(), dim=1)
+        for images, _ in train_loader.dataset
+    ])
 
-    scheduler.step()  # Adjust the learning rate based on the scheduler
+    train_precision, train_recall, train_f1 = calculate_metrics(train_labels_all, train_preds_all)
+
+    scheduler.step()
     train_accuracy = 100 * correct / total
     train_losses.append(running_loss / len(train_loader))
     train_accuracies.append(train_accuracy)
 
-    # Validation phase
+    # Validation Phase
     model.eval()
     val_running_loss = 0.0
     correct = 0
     total = 0
+
     with torch.no_grad():
         for images, labels in val_loader:
             images, labels = images.to(device), labels.to(device)
@@ -255,54 +280,59 @@ for epoch in range(CONFIG.num_epochs):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            
+        # Validation Metrics
+        val_labels_all = torch.cat([labels for _, labels in val_loader.dataset])
+        val_preds_all = torch.cat([
+            torch.argmax(model(images.to(device)).detach(), dim=1)
+            for images, _ in val_loader.dataset
+        ])
 
+        val_precision, val_recall, val_f1 = calculate_metrics(val_labels_all, val_preds_all)
+
+    val_loss_epoch = val_running_loss / len(val_loader)
     val_accuracy = 100 * correct / total
-    val_losses.append(val_running_loss / len(val_loader))
+    val_losses.append(val_loss_epoch)
     val_accuracies.append(val_accuracy)
 
-    # Test phase
-    model.eval()
-    test_running_loss = 0.0
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            test_running_loss += loss.item()
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-    test_accuracy = 100 * correct / total
-    test_losses.append(test_running_loss / len(test_loader))
-    test_accuracies.append(test_accuracy)
-
-    # Save the model if validation accuracy improves
-    if val_accuracy > best_val_accuracy:
-        best_val_accuracy = val_accuracy
+    # Early Stopping Check
+    if val_loss_epoch < best_val_loss:
+        best_val_loss = val_loss_epoch
         best_model_wts = model.state_dict()
+        patience_counter = 0  # Reset patience counter
+    else:
+        patience_counter += 1
 
-    train_loss_epoch = running_loss / len(train_loader)
-    val_loss_epoch = val_running_loss / len(val_loader)
-    test_running_loss = test_running_loss / len(test_loader)
+    if patience_counter >= patience:
+        print(f"Early stopping triggered at epoch {epoch}")
+        break
 
+    # Log metrics to Comet
     experiment.log_metrics(
         {
-            "Train Loss Epoch": train_loss_epoch,
+            "Train Loss Epoch": running_loss / len(train_loader),
             "Train Accuracy Epoch": train_accuracy,
+            "Train Precision Epoch": train_precision,
+            "Train Recall Epoch": train_recall,
+            "Train F1-Score Epoch": train_f1,
             "Val Loss Epoch": val_loss_epoch,
             "Val Accuracy Epoch": val_accuracy,
-            "Test Loss Epoch": val_loss_epoch,
-            "Test Accuracy Epoch": test_accuracy,
+            "Val Precision Epoch": val_precision,
+            "Val Recall Epoch": val_recall,
+            "Val F1-Score Epoch": val_f1,
         },
         epoch=epoch,
     )
 
     print(
-        f"Epoch {epoch}, Train Loss: {train_loss_epoch}, Train Accuracy: {train_accuracy}%, Val Loss: {val_loss_epoch}, Val Accuracy: {val_accuracy}%"
+        f"Epoch {epoch} "
+        f"Train Loss: {running_loss / len(train_loader):.4f}, "
+        f"Train Accuracy: {train_accuracy:.2f}%, "
+        f"Val Loss: {val_loss_epoch:.4f}, "
+        f"Val Accuracy: {val_accuracy:.2f}%, "
+        f"Train Precision: {train_precision:.4f}, Train Recall: {train_recall:.4f}, Train F1: {train_f1:.4f}, "
+        f"Val Precision: {val_precision:.4f}, Val Recall: {val_recall:.4f}, Val F1: {val_f1:.4f}"
     )
-
 
 # # Save
 
