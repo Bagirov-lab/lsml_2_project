@@ -333,6 +333,9 @@ for epoch in range(CONFIG.num_epochs):
         f"Train Precision: {train_precision:.4f}, Train Recall: {train_recall:.4f}, Train F1: {train_f1:.4f}, "
         f"Val Precision: {val_precision:.4f}, Val Recall: {val_recall:.4f}, Val F1: {val_f1:.4f}"
     )
+    
+    torch.save(model.state_dict(), f"model_epoch_{epoch}.pt")
+    print(f"Saved best model at epoch {epoch}")
 
 # # Save
 
