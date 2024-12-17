@@ -28,7 +28,7 @@ class CONFIG:
     base_layer_name = "resnet34"
     weights = "DEFAULT"
     final_layer_n_classes = 37
-    num_epochs = 25
+    num_epochs = 35
     optimizer_lr = 0.001
     scheduler_step_size = 7
     scheduler_gamma = 0.1
