@@ -19,8 +19,6 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 from tqdm import tqdm
 
-from kaggle_secrets import UserSecretsClient
-
 
 class CONFIG:
     batch_size = 128
@@ -106,6 +104,9 @@ def create_model_with_lora(
 
 
 if __name__ == "__main__":
+    
+    from kaggle_secrets import UserSecretsClient
+    
     user_secrets = UserSecretsClient()
 
     experiment = comet_ml.start(

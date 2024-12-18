@@ -162,5 +162,8 @@ cython_debug/
 #.idea/
 .env.dev
 .env
+.env.model
+.ruff_cache
 model-data
 /tmp
+CometModel

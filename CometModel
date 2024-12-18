@@ -1,1 +1,0 @@
-{"format": "pytorch", "comet_sdk_version": "3.47.4", "model_metadata": {"pytorch_version": "2.4.0", "pickle_module": "pickle", "model_path": "LoRA_Pet_resnet18/comet-torch-model.pth"}}

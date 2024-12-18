@@ -28,6 +28,7 @@ python-multipart = "^0.0.19"
 matplotlib = "^3.10.0"
 ruff = "^0.8.3"
 kaggle = "^1.6.17"
+loguru = "^0.7.3"
 
 [build-system]
 requires = ["poetry-core"]

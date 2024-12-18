@@ -6,7 +6,9 @@ from PIL import Image
 from dotenv import load_dotenv
 import logging
 
-from app.model import load_model, class_to_breed
+from app.comet import load_model
+
+from app.model import class_to_breed
 
 load_dotenv(dotenv_path=".env")
 load_dotenv(dotenv_path=".env.model")

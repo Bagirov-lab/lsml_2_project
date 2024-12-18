@@ -21,7 +21,7 @@ RUN poetry install
 COPY ./app /code/app
 
 # Dowload Model
-RUN poetry run python app/model.py
+RUN poetry run python app/comet.py
 
 # Default command
 CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
