@@ -129,6 +129,7 @@ The repository includes detailed documentation for each part of the project:
 
 ## Project Structure 🗂️
 
+```bash
 .
 ├── app/                         # Back-end application code
 │   ├── comet.py                 # Comet ML integration
@@ -153,6 +154,7 @@ The repository includes detailed documentation for each part of the project:
 ├── pyproject.toml               # Poetry dependencies
 ├── LICENSE                      # Project license
 └── README.md                    # Project README
+```
 
 ## License 📄
 
