@@ -19,6 +19,7 @@ Welcome to the **Lovely Pets Project**! This repository contains a full-stack ap
   - [Documentation 📚](#documentation-)
   - [Project Structure 🗂️](#project-structure-️)
   - [License 📄](#license-)
+  - [Feedback 💬](#feedback-)
 
 ---
 
@@ -75,30 +76,31 @@ BACKEND_URL=http://localhost:80
     ./run_image_back.sh
     ```
 
-For more details, see docs/backend.md.
+For more details, see `docs/backend.md`.
 
 ### Build and Run Front-End
 
-1.	Build the Front-End Image:
+1. Build the Front-End Image:
 
     ```bash
     ./build_image_front.sh
     ```
 
-2.	Run the Front-End Container:
+2. Run the Front-End Container:
 
     ```bash
     ./run_image_front.sh
     ```
 
-
-For more details, see docs/frontend.md.
+For more details, see `docs/frontend.md`.
 
 ### Run Full Application Locally
 
 To run the back-end and front-end services together without an external Docker registry, use:
 
+```bash
 docker-compose -f docker-compose.local.yml up -d
+```
 
 - Back-End: `http://localhost:80`
 - Front-End: `http://localhost:8080`
@@ -109,7 +111,9 @@ Run Full Application in Production
 
 To run the services using prebuilt images (pushed to Docker registry):
 
+```bash
 docker-compose -f docker-compose.yml up -d
+```
 
 For more details, see docs/compose.md.
 
@@ -154,6 +158,6 @@ The repository includes detailed documentation for each part of the project:
 
 This project is licensed under the MIT License.
 
-Feedback 💬
+## Feedback 💬
 
 If you encounter any issues or have suggestions, feel free to open an issue or contribute to the repository. We appreciate your feedback!
