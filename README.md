@@ -76,7 +76,7 @@ BACKEND_URL=http://localhost:80
     ./run_image_back.sh
     ```
 
-For more details, see `docs/backend.md`.
+For more details, see [docs/backend.md](docs/backend.md).
 
 ### Build and Run Front-End
 
@@ -92,7 +92,7 @@ For more details, see `docs/backend.md`.
     ./run_image_front.sh
     ```
 
-For more details, see `docs/frontend.md`.
+For more details, see [docs/frontend.md](docs/frontend.md).
 
 ### Run Full Application Locally
 
@@ -105,7 +105,7 @@ docker-compose -f docker-compose.local.yml up -d
 - Back-End: `http://localhost:80`
 - Front-End: `http://localhost:8080`
 
-For more details, see `docs/compose.local.md`.
+For more details, see [docs/compose.local.md](docs/compose.local.md).
 
 Run Full Application in Production
 
@@ -115,7 +115,7 @@ To run the services using prebuilt images (pushed to Docker registry):
 docker-compose -f docker-compose.yml up -d
 ```
 
-For more details, see `docs/compose.md`.
+For more details, see [docs/compose.md](docs/compose.md).
 
 ## Documentation 📚
 
@@ -158,7 +158,7 @@ The repository includes detailed documentation for each part of the project:
 
 ## License 📄
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Feedback 💬
 
