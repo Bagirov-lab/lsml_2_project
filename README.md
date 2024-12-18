@@ -1,5 +1,3 @@
-Here is the README.md file in GitHub format to describe your project and reference the other .md files we discussed:
-
 # Lovely Pets Project 🐾
 
 Welcome to the **Lovely Pets Project**! This repository contains a full-stack application, including a **back-end** and a **front-end** service, all managed using Docker and Docker Compose for local development and production.
@@ -13,9 +11,10 @@ Welcome to the **Lovely Pets Project**! This repository contains a full-stack ap
   - [Project Overview 🚀](#project-overview-)
   - [Prerequisites ⚙️](#prerequisites-️)
   - [How to Use 🛠️](#how-to-use-️)
+    - [Run Full Application Locally](#run-full-application-locally)
+    - [Set Up ENV variables file](#set-up-env-variables-file)
     - [Build and Run Back-End](#build-and-run-back-end)
     - [Build and Run Front-End](#build-and-run-front-end)
-    - [Run Full Application Locally](#run-full-application-locally)
   - [Documentation 📚](#documentation-)
   - [Project Structure 🗂️](#project-structure-️)
   - [License 📄](#license-)
@@ -38,6 +37,8 @@ The Lovely Pets Project consists of two main components:
 
 Both services are containerized with **Docker** and orchestrated using **Docker Compose** for development and production environments.
 
+For more details, see [docs/project.md](docs/project.md).
+
 ---
 
 ## Prerequisites ⚙️
@@ -46,8 +47,37 @@ Ensure the following tools are installed on your system:
 
 1. [Docker](https://www.docker.com/)
 2. [Docker Compose](https://docs.docker.com/compose/)
-3. [Python 3.10+](https://www.python.org/)
-4. [Poetry](https://python-poetry.org/) (for local development)
+3. Only Local Development additionaly:
+   1. [Python 3.10+](https://www.python.org/)
+   2. [Poetry](https://python-poetry.org/) (for local development)
+
+## How to Use 🛠️
+
+### Run Full Application Locally
+
+Run Full Application in Production
+
+To run the services using prebuilt images (pushed to Docker registry):
+
+```bash
+docker-compose -f docker-compose.yml up -d
+```
+
+For more details, see [docs/compose.md](docs/compose.md).
+
+To run the back-end and front-end services together without an external Docker registry, you will need to supply `.env`.
+Read more details about this file in see [docs/env_file.md](docs/env_file.md). After this you can run:
+
+```bash
+docker-compose -f docker-compose.local.yml up -d
+```
+
+- Back-End: `http://localhost:80`
+- Front-End: `http://localhost:8080`
+
+For more details, see [docs/compose.local.md](docs/compose.local.md).
+
+### Set Up ENV variables file
 
 Create a `.env` file in the root directory with the required environment variables:
 
@@ -60,7 +90,7 @@ COMET_MODEL_FILE=your-model-file-path
 BACKEND_URL=http://localhost:80
 ```
 
-## How to Use 🛠️
+For more details, see [docs/env_file.md](docs/env_file.md).
 
 ### Build and Run Back-End
 
@@ -94,29 +124,6 @@ For more details, see [docs/backend.md](docs/backend.md).
 
 For more details, see [docs/frontend.md](docs/frontend.md).
 
-### Run Full Application Locally
-
-To run the back-end and front-end services together without an external Docker registry, use:
-
-```bash
-docker-compose -f docker-compose.local.yml up -d
-```
-
-- Back-End: `http://localhost:80`
-- Front-End: `http://localhost:8080`
-
-For more details, see [docs/compose.local.md](docs/compose.local.md).
-
-Run Full Application in Production
-
-To run the services using prebuilt images (pushed to Docker registry):
-
-```bash
-docker-compose -f docker-compose.yml up -d
-```
-
-For more details, see [docs/compose.md](docs/compose.md).
-
 ## Documentation 📚
 
 The repository includes detailed documentation for each part of the project:
@@ -136,13 +143,17 @@ The repository includes detailed documentation for each part of the project:
 │   ├── main.py                  # FastAPI entrypoint
 │   ├── model.py                 # Model logic
 │   └── train.py                 # Model training script
-├── web-app/                     # Front-end application files
+├── web-app/                     # Front-end static files
+│   ├── example_photo.jpg        # Example photo for the application
+│   ├── index.html               # Main HTML file
+│   ├── script.js                # JavaScript logic for front-end
+│   └── style.css                # Stylesheet for the front-end
 ├── docs/                        # Documentation files
-│   ├── backend.md
-│   ├── frontend.md
-│   ├── compose.local.md
-│   ├── compose.md
-│   └── notes.md
+│   ├── backend.md               # Back-End Documentation
+│   ├── frontend.md              # Front-End Documentation
+│   ├── compose.local.md         # Local Development Details
+│   ├── compose.md               # Production Deployment Details
+│   └── notes.md                 # Additional Notes
 ├── build_image_back.sh          # Script to build back-end image
 ├── build_image_front.sh         # Script to build front-end image
 ├── run_image_back.sh            # Script to run back-end container
@@ -152,6 +163,7 @@ The repository includes detailed documentation for each part of the project:
 ├── Dockerfile.back              # Dockerfile for back-end
 ├── Dockerfile.front             # Dockerfile for front-end
 ├── pyproject.toml               # Poetry dependencies
+├── .env.example                 # Example environment variables file
 ├── LICENSE                      # Project license
 └── README.md                    # Project README
 ```

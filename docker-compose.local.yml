@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile.front
       args:
-        BACKEND_URL: http://localhost:80
+        BACKEND_URL: ${BACKEND_URL}
     ports:
       - "8080:80"  # Maps container port 80 to host port 8080
     restart: unless-stopped
