@@ -1,5 +1,3 @@
-Here is the README.md file in GitHub format to describe your project and reference the other .md files we discussed:
-
 # Lovely Pets Project 🐾
 
 Welcome to the **Lovely Pets Project**! This repository contains a full-stack application, including a **back-end** and a **front-end** service, all managed using Docker and Docker Compose for local development and production.
@@ -13,10 +11,10 @@ Welcome to the **Lovely Pets Project**! This repository contains a full-stack ap
   - [Project Overview 🚀](#project-overview-)
   - [Prerequisites ⚙️](#prerequisites-️)
   - [How to Use 🛠️](#how-to-use-️)
+    - [Run Full Application Locally](#run-full-application-locally)
     - [Set Up ENV variables file](#set-up-env-variables-file)
     - [Build and Run Back-End](#build-and-run-back-end)
     - [Build and Run Front-End](#build-and-run-front-end)
-    - [Run Full Application Locally](#run-full-application-locally)
   - [Documentation 📚](#documentation-)
   - [Project Structure 🗂️](#project-structure-️)
   - [License 📄](#license-)
@@ -52,6 +50,30 @@ Ensure the following tools are installed on your system:
    2. [Poetry](https://python-poetry.org/) (for local development)
 
 ## How to Use 🛠️
+
+### Run Full Application Locally
+
+Run Full Application in Production
+
+To run the services using prebuilt images (pushed to Docker registry):
+
+```bash
+docker-compose -f docker-compose.yml up -d
+```
+
+For more details, see [docs/compose.md](docs/compose.md).
+
+To run the back-end and front-end services together without an external Docker registry, you will need to supply `.env`.
+Read more details about this file in see [docs/env_file.md](docs/env_file.md). After this you can run:
+
+```bash
+docker-compose -f docker-compose.local.yml up -d
+```
+
+- Back-End: `http://localhost:80`
+- Front-End: `http://localhost:8080`
+
+For more details, see [docs/compose.local.md](docs/compose.local.md).
 
 ### Set Up ENV variables file
 
@@ -99,29 +121,6 @@ For more details, see [docs/backend.md](docs/backend.md).
     ```
 
 For more details, see [docs/frontend.md](docs/frontend.md).
-
-### Run Full Application Locally
-
-To run the back-end and front-end services together without an external Docker registry, use:
-
-```bash
-docker-compose -f docker-compose.local.yml up -d
-```
-
-- Back-End: `http://localhost:80`
-- Front-End: `http://localhost:8080`
-
-For more details, see [docs/compose.local.md](docs/compose.local.md).
-
-Run Full Application in Production
-
-To run the services using prebuilt images (pushed to Docker registry):
-
-```bash
-docker-compose -f docker-compose.yml up -d
-```
-
-For more details, see [docs/compose.md](docs/compose.md).
 
 ## Documentation 📚
 
