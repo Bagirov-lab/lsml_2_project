@@ -136,13 +136,17 @@ The repository includes detailed documentation for each part of the project:
 │   ├── main.py                  # FastAPI entrypoint
 │   ├── model.py                 # Model logic
 │   └── train.py                 # Model training script
-├── web-app/                     # Front-end application files
+├── web-app/                     # Front-end static files
+│   ├── example_photo.jpg        # Example photo for the application
+│   ├── index.html               # Main HTML file
+│   ├── script.js                # JavaScript logic for front-end
+│   └── style.css                # Stylesheet for the front-end
 ├── docs/                        # Documentation files
-│   ├── backend.md
-│   ├── frontend.md
-│   ├── compose.local.md
-│   ├── compose.md
-│   └── notes.md
+│   ├── backend.md               # Back-End Documentation
+│   ├── frontend.md              # Front-End Documentation
+│   ├── compose.local.md         # Local Development Details
+│   ├── compose.md               # Production Deployment Details
+│   └── notes.md                 # Additional Notes
 ├── build_image_back.sh          # Script to build back-end image
 ├── build_image_front.sh         # Script to build front-end image
 ├── run_image_back.sh            # Script to run back-end container
