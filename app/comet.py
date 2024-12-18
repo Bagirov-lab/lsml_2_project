@@ -155,6 +155,7 @@ if __name__ == "__main__":
 
     logging.info("Load state dictionary...")
     comet_model_file = environ.get("COMET_MODEL_FILE")
+
     state_dict = torch.load(
         f=comet_model_file, map_location=torch.device("cpu"), weights_only=True
     )

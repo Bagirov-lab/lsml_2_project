@@ -33,6 +33,24 @@
             ],
             "jinja": true,
             "envFile": "${workspaceFolder}/.env.dev"
+        },
+        {
+            "type": "bashdb",
+            "name": "Run build_image_back.sh",
+            "request": "launch",
+            "program": "${workspaceFolder}/build_image_back.sh",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "bashdb",
+            "name": "Run run_image_back.sh",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_image_back.sh",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }

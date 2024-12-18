@@ -7,11 +7,17 @@ WORKDIR /code
 # Install Poetry
 RUN pip install poetry==1.8.4
 
-# Accept CI_JOB_TOKEN as a build argument
+# Accept build arguments
 ARG COMET_API_KEY
 ARG COMET_WORKSPACE
+
 ARG COMET_MODEL_NAME
+ENV COMET_MODEL_NAME=${COMET_MODEL_NAME}
+
 ARG COMET_MODEL_NAME_VERSION
+ENV COMET_MODEL_NAME_VERSION=${COMET_MODEL_NAME_VERSION}
+
+ARG COMET_MODEL_FILE 
 
 # Create Environment
 COPY ./pyproject.toml ./poetry.lock /code/
@@ -21,7 +27,7 @@ RUN poetry install
 COPY ./app /code/app
 
 # Dowload Model
-RUN poetry run python app/comet.py
+RUN PYTHONPATH=/code poetry run python app/comet.py
 
 # Default command
 CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
