@@ -13,6 +13,7 @@ Welcome to the **Lovely Pets Project**! This repository contains a full-stack ap
   - [Project Overview 🚀](#project-overview-)
   - [Prerequisites ⚙️](#prerequisites-️)
   - [How to Use 🛠️](#how-to-use-️)
+    - [Set Up ENV variables file](#set-up-env-variables-file)
     - [Build and Run Back-End](#build-and-run-back-end)
     - [Build and Run Front-End](#build-and-run-front-end)
     - [Run Full Application Locally](#run-full-application-locally)
@@ -46,8 +47,13 @@ Ensure the following tools are installed on your system:
 
 1. [Docker](https://www.docker.com/)
 2. [Docker Compose](https://docs.docker.com/compose/)
-3. [Python 3.10+](https://www.python.org/)
-4. [Poetry](https://python-poetry.org/) (for local development)
+3. Only Local Development additionaly:
+   1. [Python 3.10+](https://www.python.org/)
+   2. [Poetry](https://python-poetry.org/) (for local development)
+
+## How to Use 🛠️
+
+### Set Up ENV variables file
 
 Create a `.env` file in the root directory with the required environment variables:
 
@@ -60,7 +66,7 @@ COMET_MODEL_FILE=your-model-file-path
 BACKEND_URL=http://localhost:80
 ```
 
-## How to Use 🛠️
+For more details, see [docs/env_file.md](docs/env_file.md).
 
 ### Build and Run Back-End
 
@@ -156,6 +162,7 @@ The repository includes detailed documentation for each part of the project:
 ├── Dockerfile.back              # Dockerfile for back-end
 ├── Dockerfile.front             # Dockerfile for front-end
 ├── pyproject.toml               # Poetry dependencies
+├── .env.example                 # Example environment variables file
 ├── LICENSE                      # Project license
 └── README.md                    # Project README
 ```
