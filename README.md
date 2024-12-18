@@ -46,7 +46,7 @@ Ensure the following tools are installed on your system:
 
 1. [Docker](https://www.docker.com/)
 2. [Docker Compose](https://docs.docker.com/compose/)
-3. Python 3.10+
+3. [Python 3.10+](https://www.python.org/)
 4. [Poetry](https://python-poetry.org/) (for local development)
 
 Create a `.env` file in the root directory with the required environment variables:
