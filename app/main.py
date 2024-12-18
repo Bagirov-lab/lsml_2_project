@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from torchvision import transforms
 from PIL import Image
 from dotenv import load_dotenv
-import logging
+from loguru import logger as logging
 
 from app.comet import load_model
 
@@ -64,5 +64,5 @@ async def predict(file: UploadFile = File(...)):
             "breed_name": breed_name,
         }
     except Exception as e:
-        logging.info(f"Predict: Error {e.__traceback__})")
+        logging.error(f"Predict: Error {e.__traceback__})")
         raise HTTPException(status_code=400, detail=f"Error processing file: {str(e)}")
