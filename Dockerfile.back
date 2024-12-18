@@ -1,0 +1,33 @@
+# Base Python image
+FROM python:3.10
+
+# Set working directory
+WORKDIR /code
+
+# Install Poetry
+RUN pip install poetry==1.8.4
+
+# Accept build arguments
+ARG COMET_API_KEY
+ARG COMET_WORKSPACE
+
+ARG COMET_MODEL_NAME
+ENV COMET_MODEL_NAME=${COMET_MODEL_NAME}
+
+ARG COMET_MODEL_NAME_VERSION
+ENV COMET_MODEL_NAME_VERSION=${COMET_MODEL_NAME_VERSION}
+
+ARG COMET_MODEL_FILE 
+
+# Create Environment
+COPY ./pyproject.toml ./poetry.lock /code/
+RUN poetry install
+
+# Copy API
+COPY ./app /code/app
+
+# Dowload Model
+RUN PYTHONPATH=/code poetry run python app/comet.py
+
+# Default command
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

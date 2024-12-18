@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false, // Enable debugging external libraries
+            "args": [
+                "-i"
+            ], // Start in interactive mode
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/.venv/bin/python3"
+            }
+        },
+        {
+            "name": "Python: Backend",
+            "type": "debugpy",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python3",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "80"
+            ],
+            "jinja": true,
+            "envFile": "${workspaceFolder}/.env.dev"
+        },
+        {
+            "type": "bashdb",
+            "name": "Run build_image_back.sh",
+            "request": "launch",
+            "program": "${workspaceFolder}/build_image_back.sh",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "bashdb",
+            "name": "Run run_image_back.sh",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_image_back.sh",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

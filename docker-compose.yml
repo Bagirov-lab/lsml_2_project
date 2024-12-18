@@ -1,0 +1,26 @@
+name: lovely_pets
+version: "3.9"
+
+services:
+  core_service:
+    image: ebagirov/lsml_backend:latest  # Use the latest backend image
+    ports:
+      - "80:80"  # Maps container port 80 to host port 80
+    restart: unless-stopped
+    networks:
+      - lovely-pets-net
+
+  front_service:
+    image: ebagirov/lsml_frontend:latest  # Use the latest frontend image
+    ports:
+      - "8080:80"  # Maps container port 80 to host port 8080
+    restart: unless-stopped
+    networks:
+      - lovely-pets-net
+    depends_on:
+      - core_service
+
+# Shared Network
+networks:
+  lovely-pets-net:
+    driver: bridge
