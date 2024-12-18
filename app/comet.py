@@ -49,14 +49,14 @@ def create_env_file(env_dict: dict,
             for key, value in env_dict.items():
                 env_file.write(f"{key}={value}\n")
         try:
-            logging.info(f".env file successfully created at: {file_path}")
+            logging.info(f"Env file successfully created at: {file_path}")
         except Exception:
-            print(f".env file successfully created at: {file_path}")
+            print(f"Env file successfully created at: {file_path}")
     except Exception as e:
         try:
-            logging.error(f"Error creating .env file: {e}")
+            logging.error(f"Error creating env file: {e}")
         except Exception:
-            print(f"Error creating .env file: {e}")
+            print(f"Error creating env file: {e}")
 
 
 def load_model():
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     logging.info("Download model from registry...")
     download_model_from_comet()
 
-    logging.info("Load Experiment Params...")
+    logging.info("Load Comet Model...")
     comet_api = comet_ml.API()
 
     model_comet = comet_api.get_model(
@@ -94,17 +94,21 @@ if __name__ == "__main__":
         model_name=environ.get("COMET_MODEL_NAME"),
     )
 
+    logging.info("Load Version of the Model...")
     model_comet_details = model_comet.get_details(
         version=environ.get("COMET_MODEL_NAME_VERSION")
     )
 
+    logging.info("Get the Experiment Key of the Version...")
     model_comet_details_experiment_key = model_comet_details.get("experimentKey")
 
     comet_experiment = comet_api.get_experiment_by_key(
         model_comet_details_experiment_key
     )
 
-    # final_layer_n_classes
+    logging.info("Retrive Experiment Hyper Params...")
+    
+    logging.info("Retrive base_layer_name hyperparameter...")
     base_layer_name = comet_experiment.get_parameters_summary("base_layer_name")
     
     if len(base_layer_name) > 0:
@@ -115,6 +119,7 @@ if __name__ == "__main__":
             f"\ncheck id {model_comet_details_experiment_key}"
         )
 
+    logging.info("Retrive final_layer_n_classes hyperparameter...")
     final_layer_n_classes = comet_experiment.get_parameters_summary(
         "final_layer_n_classes"
     )
@@ -133,6 +138,7 @@ if __name__ == "__main__":
             f"\ncheck id {model_comet_details_experiment_key}"
         )
 
+    logging.info("Retrive weights hyperparameter...")
     weights = comet_experiment.get_parameters_summary("weights")
     if len(weights) > 0:
         weights = weights.get("valueCurrent")
