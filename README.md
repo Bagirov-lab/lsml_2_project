@@ -37,6 +37,8 @@ The Lovely Pets Project consists of two main components:
 
 Both services are containerized with **Docker** and orchestrated using **Docker Compose** for development and production environments.
 
+For more details, see [docs/project.md](docs/project.md).
+
 ---
 
 ## Prerequisites ⚙️

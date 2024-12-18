@@ -69,7 +69,6 @@ async def predict(file: UploadFile = File(...)):
 
         # Return the predicted class and breed name
         return {
-            "filename": file.filename,
             "probabilty": max_prob_value,
             "breed_name": breed_name,
         }
