@@ -121,11 +121,11 @@ For more details, see `docs/compose.md`.
 
 The repository includes detailed documentation for each part of the project:
 
-- Back-End: docs/backend.md
-- Front-End: docs/frontend.md
-- Local Development: docs/compose.local.md
-- Production Deployment: docs/compose.md
-- Additional Notes: docs/notes.md
+- **Back-End**: [docs/backend.md](docs/backend.md)
+- **Front-End**: [docs/frontend.md](docs/frontend.md)
+- **Local Development**: [docs/compose.local.md](docs/compose.local.md)
+- **Production Deployment**: [docs/compose.md](docs/compose.md)
+- **Additional Notes**: [docs/notes.md](docs/notes.md)
 
 ## Project Structure 🗂️
 
