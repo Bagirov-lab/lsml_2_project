@@ -105,7 +105,7 @@ docker-compose -f docker-compose.local.yml up -d
 - Back-End: `http://localhost:80`
 - Front-End: `http://localhost:8080`
 
-For more details, see docs/compose.local.md.
+For more details, see `docs/compose.local.md`.
 
 Run Full Application in Production
 
@@ -115,7 +115,7 @@ To run the services using prebuilt images (pushed to Docker registry):
 docker-compose -f docker-compose.yml up -d
 ```
 
-For more details, see docs/compose.md.
+For more details, see `docs/compose.md`.
 
 ## Documentation 📚
 
