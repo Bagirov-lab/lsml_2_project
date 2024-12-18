@@ -36,31 +36,41 @@ async def predict(file: UploadFile = File(...)):
     """
     Endpoint to predict the pet type from an uploaded image.
     """
-    logging.info("Predict: Got Request")
+    logging.debug("Predict: Got Request")
     try:
         # Read and preprocess the image
         image = Image.open(file.file).convert("RGB")
-        # Define transformation for incoming images
+        logging.debug("Read input into RGB")
+        
+        # Define transformation for incoming image
         transform = transforms.Compose(
             [transforms.Resize((224, 224)), transforms.ToTensor()]
         )
         image_tensor = transform(image).unsqueeze(0)  # Add batch dimension
-
+        logging.debug("Transformed incoming image")
+        
         # Make prediction
         with torch.no_grad():
-            outputs = model(image_tensor)
-            _, predicted = torch.max(outputs, 1)
+            outputs = model(image_tensor) 
+            # Convert logits to probabilities using the softmax function
+            probabilities = torch.softmax(outputs, dim=1)
 
+            # Find the position of the highest probability class
+            max_prob_index = torch.argmax(probabilities, dim=1).item()
+
+            # Get the corresponding probability
+            max_prob_value = probabilities[0, max_prob_index].item()
+
+        logging.debug("Maked prediction")
+        
         # Map prediction to breed name
-        class_index = predicted.item()
-        breed_name = class_to_breed.get(class_index, "Unknown Breed")
-
-        logging.info("Predict: Success")
+        breed_name = class_to_breed.get(max_prob_index, "Unknown Breed")
+        logging.debug("Maped prediction to breed name")
 
         # Return the predicted class and breed name
         return {
             "filename": file.filename,
-            "prediction": class_index,
+            "probabilty": max_prob_value,
             "breed_name": breed_name,
         }
     except Exception as e:
